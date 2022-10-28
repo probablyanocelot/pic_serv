@@ -4,7 +4,16 @@
 			"path": "."
 		},
 		{
-			"path": "../python/examples"
+			"path": "../gallery"
+		},
+		{
+			"path": "../0. repo/apps/disco-bot-micro"
+		},
+		{
+			"path": "../0. repo/python/examples/flask_example"
+		},
+		{
+			"path": "../0. repo/apps/lottery_stats"
 		}
 	],
 	"settings": {}

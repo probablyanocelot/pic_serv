@@ -4,7 +4,7 @@ import os
 import json
 
 from config import cloudAMQP
-from main import Product, db
+from main import Picture, db
 
 
 params = pika.URLParameters(
@@ -22,32 +22,32 @@ channel.queue_declare(queue='pic-serv')
 
 
 def callback(ch, method, properties, body):
-    print('Received in tutorial-flask')
+    print('Received in pic_serv')
     data = json.loads(body)
     print(data)
 
-    if properties.content_type == 'product_created':
-        product = Product(
+    if properties.content_type == 'picture_created':
+        picture = Picture(
             id=data['id'], title=data['title'], image=data['image'])
-        db.session.add(product)
+        db.session.add(picture)
         db.session.commit()
-        print('Product Created')
+        print('Picture Created')
 
-    elif properties.content_type == 'product_updated':
-        product = Product.query.get(data['id'])
-        product.title = data['title']
-        product.image = data['image']
+    elif properties.content_type == 'picture_updated':
+        picture = Picture.query.get(data['id'])
+        picture.title = data['title']
+        picture.image = data['image']
         db.session.commit()
-        print('Product Updated')
+        print('Picture Updated')
 
-    elif properties.content_type == 'product_deleted':
-        product = Product.query.get(data)
-        db.session.delete(product)
+    elif properties.content_type == 'picture_deleted':
+        picture = Picture.query.get(data)
+        db.session.delete(picture)
         db.session.commit()
-        print('Product Deleted')
+        print('Picture Deleted')
 
 
-channel.basic_consume(queue='tutorial-flask',
+channel.basic_consume(queue='pic-serv',
                       on_message_callback=callback, auto_ack=True)
 
 print('Started Consuming')
