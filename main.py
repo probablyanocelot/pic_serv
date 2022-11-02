@@ -4,6 +4,7 @@ from producer import publish
 from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
+from flask_serialize import FlaskSerialize
 # from flask_restful import Resource, reqparse
 # import werkzeug
 
@@ -16,22 +17,25 @@ app.config['SQLALCHEMY_DATABASE_URI'] = postgres_uri
 CORS(app)
 
 db = SQLAlchemy(app)
+fs_mixin = FlaskSerialize(db)
 
 
 @dataclass
-class Image(db.Model):
+class Image(db.Model, fs_mixin):
     __tablename__ = 'images'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(200))
     image = db.Column(db.String(200), unique=False, nullable=False)
 
 
+@ app.route('/api/image/<int:image_id>')
 @ app.route('/api/images')
-def index():
-    data = Image.query.all()
-    result = [d.__dict__ for d in data]
-    return jsonify(result=result)
+def index(image_id=None):
+    # data = Image.query.all()
+    # result = [d.__dict__ for d in data]
+    # return jsonify(result=result)
     # return jsonify(Image.query.all())
+    return Image.fs_get_delete_put_post(image_id)
 
 
 @ app.route('/api/images/add', methods=['POST'])  # <int:id>/add
