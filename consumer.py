@@ -31,9 +31,16 @@ def callback(ch, method, properties, body):
     if properties.content_type == 'image/jpeg':
         image_title = data['title']
         image_string = data['image']
-        encoding.string_to_bytes(image_string, image_title)
+        image_path = './img/'
+
+        # Encode image_string to bytes
+        encoding.string_to_bytes(image_string, image_path + image_title)
+
+        # Fill in model
         picture = Image(
             title=image_title, image='path placeholder')
+
+        # Add to db
         db.session.add(picture)
         db.session.commit()
         print('Image Created')
