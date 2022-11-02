@@ -14,7 +14,7 @@ def bytes_to_string(file_read):
 
 def string_to_bytes(string, file_write):
     with open(file_write, mode='wb') as file:
-        print('\n\n WRITING BYTES \n\n')
+        # print('\n\n WRITING BYTES \n\n')
         file.write(base64.b64decode(string, ))
 
 

@@ -25,11 +25,12 @@ class Image(db.Model, fs_mixin):
     __tablename__ = 'images'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(200))
-    image = db.Column(db.String(200), unique=False, nullable=False)
+    datetime_taken = db.Column(db.String(200), nullable=True)
+    # meta_data =
 
 
-@ app.route('/api/image/<int:image_id>')
 @ app.route('/api/images')
+@ app.route('/api/image/<int:image_id>')
 def index(image_id=None):
     # data = Image.query.all()
     # result = [d.__dict__ for d in data]
