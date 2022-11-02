@@ -1,10 +1,12 @@
 import pika
+import base64
 from dotenv import load_dotenv
 import os
 import json
+import encoding
 
 from config import cloudAMQP
-from main import Picture, db
+from main import Image, db
 
 
 params = pika.URLParameters(
@@ -26,25 +28,28 @@ def callback(ch, method, properties, body):
     data = json.loads(body)
     print(data)
 
-    if properties.content_type == 'picture_created':
-        picture = Picture(
-            id=data['id'], title=data['title'], image=data['image'])
+    if properties.content_type == 'image/jpeg':
+        image_title = data['title']
+        image_string = data['image']
+        encoding.string_to_bytes(image_string, image_title)
+        picture = Image(
+            title=image_title, image='path placeholder')
         db.session.add(picture)
         db.session.commit()
-        print('Picture Created')
+        print('Image Created')
 
     elif properties.content_type == 'picture_updated':
-        picture = Picture.query.get(data['id'])
+        picture = Image.query.get(data['id'])
         picture.title = data['title']
         picture.image = data['image']
         db.session.commit()
-        print('Picture Updated')
+        print('Image Updated')
 
     elif properties.content_type == 'picture_deleted':
-        picture = Picture.query.get(data)
+        picture = Image.query.get(data)
         db.session.delete(picture)
         db.session.commit()
-        print('Picture Deleted')
+        print('Image Deleted')
 
 
 channel.basic_consume(queue='pic-serv',
